@@ -1,0 +1,7 @@
+git config --global user.name "Jorge Adrian Alvear Angeles"
+git config --global user.email "20223tn039@utez.edu.mx"
+
+cd ruta/a/tu/proyecto
+git add .
+git commit -m "Tu mensaje de commit"
+git push
