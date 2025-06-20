@@ -1,6 +1,12 @@
 body {
-  background-image: url("C:/Users/CC10/Documents/Full_House/Module/images/vortex1.gif");
+  background-image: url("../images/vortex2.gif");
   background-color: #f8f9fa;
-  background-size: cover; /* opcional: para que cubra toda la pantalla */
-  background-repeat: no-repeat; /* opcional: para que no se repita */
+  background-size: cover;         /* Cubre toda la pantalla */
+  background-repeat: no-repeat;   /* No repite la imagen */
+  background-position: center;    /* Centra la imagen */
+  min-height: 100vh;              /* Al menos el alto de la ventana */
+  width: 100vw;                   /* Ancho completo de la ventana */
+  margin: 0;                      /* Sin márgenes */
+  padding: 0;                     /* Sin padding */
+  overflow-x: hidden;             /* Sin scroll horizontal */
 }
