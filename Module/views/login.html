@@ -23,12 +23,18 @@
         </div>
         <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
         <div class="text-center mt-3">
-          <a href="#" class="text-decoration-none">¿No tienes cuenta? Regístrate</a>
+          <a href="Registro.html" class="text-decoration-none">¿No tienes cuenta? Regístrate</a>
         </div>
       </form>
     </div>
   </div>
 
+  <script>
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Evita el envío normal del formulario
+    window.location.href = 'Index.html'; // Redirige a Index.html
+  });
+  </script>
   <script src="../JavaScripts/login.js"></script>
 </body>
 </html>
