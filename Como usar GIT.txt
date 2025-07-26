@@ -5,3 +5,5 @@ cd ruta/a/tu/proyecto
 git add .
 git commit -m "Tu mensaje de commit"
 git push
+
+pip install Flask mysql-connector-python Werkzeug
