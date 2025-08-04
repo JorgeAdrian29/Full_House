@@ -7,3 +7,11 @@ git commit -m "Tu mensaje de commit"
 git push
 
 pip install Flask mysql-connector-python Werkzeug
+
+
+# Reemplaza con tus valores reales
+$env:MYSQL_HOST = "127.0.0.1"
+$env:MYSQL_USER = "root"
+$env:MYSQL_PASSWORD = "root"
+$env:MYSQL_DB = "full_house_db"
+$env:MYSQL_PORT = "3306"

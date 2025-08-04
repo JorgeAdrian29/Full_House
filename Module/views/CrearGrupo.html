@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="shortcut icon" href="../images/LogoFullHouse.ico"/>
-  <link rel="stylesheet" href="../styles/index.css">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='images/LogoFullHouse.ico') }}"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/index.css') }}">
   <style>
     body {
       background-color: #f3f4f6;
@@ -23,6 +23,20 @@
   </style>
 </head>
 <body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{{ url_for('show_index') }}">Full House</a>
+      <div class="collapse navbar-collapse justify-content-end">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('show_index') }}">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link active" href="{{ url_for('show_create_group_form') }}">Crear Grupo</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('show_grupos_usuario') }}">Mis Grupos</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('show_perfil_config') }}">Perfil</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Cerrar sesión</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
   <div class="container">
     <div class="row justify-content-center">
@@ -31,30 +45,26 @@
         <div class="form-container">
           <h3 class="mb-4"><i class="bi bi-people-fill"></i> Crear un nuevo grupo</h3>
 
-          <form>
-            <!-- Nombre del grupo -->
+          <form action="{{ url_for('create_group') }}" method="POST" enctype="multipart/form-data">
             <div class="mb-3">
               <label for="nombreGrupo" class="form-label"><i class="bi bi-chat-left-dots-fill"></i> Nombre del grupo</label>
-              <input type="text" class="form-control" id="nombreGrupo" placeholder="Ej: Fans de juegos retro" required>
+              <input type="text" class="form-control" id="nombreGrupo" name="nombreGrupo" placeholder="Ej: Fans de juegos retro" required>
             </div>
 
-            <!-- Descripción -->
             <div class="mb-3">
               <label for="descripcionGrupo" class="form-label"><i class="bi bi-file-earmark-text-fill"></i> Descripción</label>
-              <textarea class="form-control" id="descripcionGrupo" rows="3" placeholder="Cuéntanos de qué trata el grupo..." required></textarea>
+              <textarea class="form-control" id="descripcionGrupo" name="descripcionGrupo" rows="3" placeholder="Cuéntanos de qué trata el grupo..." required></textarea>
             </div>
 
-            <!-- Imagen de portada -->
             <div class="mb-3">
               <label for="imagenGrupo" class="form-label"><i class="bi bi-image-fill"></i> Imagen de portada</label>
-              <input type="file" class="form-control" id="imagenGrupo" accept="image/*">
+              <input type="file" class="form-control" id="imagenGrupo" name="imagenGrupo" accept="image/*">
               <div class="form-text">Formato JPG o PNG, máximo 2MB.</div>
             </div>
 
-            <!-- Categoría -->
             <div class="mb-3">
               <label for="categoria" class="form-label"><i class="bi bi-tags-fill"></i> Categoría</label>
-              <select class="form-select" id="categoria" required>
+              <select class="form-select" id="categoria" name="categoria" required>
                 <option value="">Selecciona una categoría...</option>
                 <option>Videojuegos</option>
                 <option>Películas y Series</option>
@@ -65,7 +75,6 @@
               </select>
             </div>
 
-            <!-- Privacidad -->
             <div class="mb-3">
               <label class="form-label"><i class="bi bi-shield-lock-fill"></i> Privacidad</label>
               <div class="form-check">
@@ -78,7 +87,6 @@
               </div>
             </div>
 
-            <!-- Botón -->
             <div class="text-end">
               <button type="submit" class="btn btn-success"><i class="bi bi-plus-circle-fill"></i> Crear grupo</button>
             </div>

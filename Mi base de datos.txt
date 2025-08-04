@@ -1,0 +1,99 @@
+-- Crear la base de datos
+CREATE DATABASE IF NOT EXISTS full_house_db;
+
+-- Usar la nueva base de datos
+USE full_house_db;
+
+-- Tabla Users
+CREATE TABLE Users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    profile_picture_url VARCHAR(255),
+    registration_date DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla Groups
+CREATE TABLE Grupos (
+    group_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT,
+    image_url VARCHAR(255),
+    category VARCHAR(50) NOT NULL,
+    privacy_type VARCHAR(10) CHECK (privacy_type IN ('publico', 'privado')) NOT NULL,
+    creator_user_id INT NOT NULL,
+    creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (creator_user_id) REFERENCES Users(user_id)
+);
+
+-- Tabla GroupMembers
+CREATE TABLE GroupMembers (
+    group_member_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    group_id INT NOT NULL,
+    join_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    role VARCHAR(50) DEFAULT 'member',
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (group_id) REFERENCES Grupos(group_id),
+    UNIQUE (user_id, group_id)
+);
+
+-- Tabla Posts
+CREATE TABLE Posts (
+    post_id INT AUTO_INCREMENT PRIMARY KEY,
+    group_id INT NOT NULL,
+    user_id INT NOT NULL,
+    content_text TEXT NOT NULL,
+    post_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (group_id) REFERENCES Grupos(group_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+-- Tabla PostImages (para múltiples imágenes por publicación, si lo necesitas)
+CREATE TABLE PostImages (
+    post_image_id INT AUTO_INCREMENT PRIMARY KEY,
+    post_id INT NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (post_id) REFERENCES Posts(post_id)
+);
+
+SET @password_hash = 'scrypt:32768:8:1$itXXQc2gwksVAg2Z$7f5c9e610feeab726b9d7b3dcc0fec63836c8cac0d401cb14bc8ab2c5b15c459b8c272ac7769f302a1aaf22d75916de8365310c90dd246e542d840d26d1d2cbc';
+
+-- Insertar Usuarios de Ejemplo
+INSERT INTO Users (full_name, username, email, password_hash, profile_picture_url) VALUES
+('Raul Aviles', 'Omnilander', 'raul.aviles@example.com', @password_hash, 'https://via.placeholder.com/100/FF5733/FFFFFF?text=RA'),
+('Usuario Demostracion', 'DemoUser1', 'demo.user@example.com', @password_hash, 'https://via.placeholder.com/100/3366FF/FFFFFF?text=DU'),
+('Fan Forever', 'FanForever', 'fan.forever@example.com', @password_hash, 'https://via.placeholder.com/100/33FF57/FFFFFF?text=FF'),
+('Usuario123', 'Usuario123', 'usuario123@example.com', @password_hash, 'https://via.placeholder.com/100/FF33FF/FFFFFF?text=U1');
+
+
+-- Insertar Grupos de Ejemplo
+INSERT INTO Grupos (name, description, image_url, category, privacy_type, creator_user_id) VALUES
+('The Last of Us', '🌿 Fans del juego y la serie de HBO. Compartimos teorías, memes y mucho más.', '/static/images/TheLastOfUs.jpeg', 'Películas y Series', 'publico', (SELECT user_id FROM Users WHERE username = 'Omnilander')),
+('Helldivers 2', '🔥 Escuadrón oficial de acción galáctica. Estrategias, armas y caos cooperativo.', '/static/images/Helldivers.jpg', 'Videojuegos', 'publico', (SELECT user_id FROM Users WHERE username = 'Omnilander')),
+('Black Mirror', '🧠 Debate tecnológico y existencial con otros fans de esta serie crítica.', '/static/images/BlackMirror.jpg', 'Películas y Series', 'publico', (SELECT user_id FROM Users WHERE username = 'DemoUser1')),
+('Deltarune', '🌀 Descubre teorías, secretos y arte de este mundo creado por Toby Fox.', '/static/images/Deltarune.jpg', 'Videojuegos', 'publico', (SELECT user_id FROM Users WHERE username = 'DemoUser1')),
+('Minecraft', '⛏️ Construcción, redstone, servidores y comunidad creativa sin límites.', '/static/images/Minecraft.jpg', 'Videojuegos', 'publico', (SELECT user_id FROM Users WHERE username = 'FanForever')),
+('Amantes de Mascotas', '🐾❤️ Compañeros de Vida y Aventuras 🐶🐱', '/static/images/Mascotas.jpg', 'Mascotas', 'publico', (SELECT user_id FROM Users WHERE username = 'FanForever')),
+('Club Secreto de Rol', '📜 Solo para los más valientes y discretos aventureros.', 'https://via.placeholder.com/400/800080/FFFFFF?text=Secreto', 'Otro', 'privado', (SELECT user_id FROM Users WHERE username = 'Omnilander'));
+
+
+-- Insertar Miembros de Grupos
+INSERT INTO GroupMembers (user_id, group_id, role) VALUES
+((SELECT user_id FROM Users WHERE username = 'Omnilander'), (SELECT group_id FROM Grupos WHERE name = 'The Last of Us'), 'admin'),
+((SELECT user_id FROM Users WHERE username = 'Omnilander'), (SELECT group_id FROM Grupos WHERE name = 'Helldivers 2'), 'admin'),
+((SELECT user_id FROM Users WHERE username = 'DemoUser1'), (SELECT group_id FROM Grupos WHERE name = 'Black Mirror'), 'admin'),
+((SELECT user_id FROM Users WHERE username = 'FanForever'), (SELECT group_id FROM Grupos WHERE name = 'Minecraft'), 'admin'),
+((SELECT user_id FROM Users WHERE username = 'Usuario123'), (SELECT group_id FROM Grupos WHERE name = 'The Last of Us'), 'member'),
+((SELECT user_id FROM Users WHERE username = 'FanForever'), (SELECT group_id FROM Grupos WHERE name = 'The Last of Us'), 'member');
+
+
+-- Insertar Publicaciones (Posts)
+INSERT INTO Posts (group_id, user_id, content_text) VALUES
+((SELECT group_id FROM Grupos WHERE name = 'The Last of Us'), (SELECT user_id FROM Users WHERE username = 'Usuario123'), '¡Hola a todos! ¿Qué opinan del nuevo episodio de The last of us?'),
+((SELECT group_id FROM Grupos WHERE name = 'The Last of Us'), (SELECT user_id FROM Users WHERE username = 'FanForever'), '¿Alguien tiene teorías sobre la próxima temporada?'),
+((SELECT group_id FROM Grupos WHERE name = 'Helldivers 2'), (SELECT user_id FROM Users WHERE username = 'Omnilander'), '¡Por la democracia! ¿Quién se une para una misión nivel 7 hoy?'),
+((SELECT group_id FROM Grupos WHERE name = 'Black Mirror'), (SELECT user_id FROM Users WHERE username = 'DemoUser1'), 'El episodio "Joan Is Awful" me dejó pensando en la privacidad de datos...');
